@@ -37,6 +37,9 @@ import org.gephi.layout.spi.LayoutProperty;
 import org.gephi.ui.propertyeditor.NodeColumnNumbersEditor;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
+import org.gephi.dynamic.api.*;
+import org.gephi.data.attributes.type.*;
+import org.gephi.data.attributes.api.*;
 
 /**
  *
@@ -90,7 +93,32 @@ public class GeoLayout implements Layout {
         float nodeY = 0;
         float averageX = 0;
         float averageY = 0;
-        Graph graph = graphModel.getGraph();
+        Graph gr = graphModel.getGraph();
+
+        boolean isDynamic = false;
+        
+        // try to handle dynamics
+        DynamicController dc = Lookup.getDefault().lookup(DynamicController.class);
+        DynamicModel dm = dc.getModel();
+        //if (!dm.isDynamicGraph()) return; // Hack: only dynamic graphs
+        isDynamic = dm.isDynamicGraph();
+        Graph graph = null;
+        Estimator estimator = null;
+        TimeInterval timeInt = null;
+        Interval currentInt = null;
+        if ( isDynamic ) {
+            DynamicGraph dg = dm.createDynamicGraph(gr);
+            timeInt = dm.getVisibleInterval();
+            dg.setInterval(timeInt);
+            // Presumably the graph at the given time interval
+            graph = dg.getSnapshotGraph(timeInt.getLow(), timeInt.getHigh());
+            estimator = dm.getEstimator();
+            // Handy for converting DynamicDouble to appropriate primitive
+            currentInt = new Interval(timeInt.getLow(), timeInt.getHigh());
+        } else {
+            graph = gr;
+        }
+            
         Node[] nodes = graph.getNodes().toArray();
         Vector<Node> validNodes = new Vector<Node>();
         Vector<Node> unvalidNodes = new Vector<Node>();
@@ -112,7 +140,11 @@ public class GeoLayout implements Layout {
             //determine lambda0:
             for(Node n: validNodes){
                 AttributeRow row = (AttributeRow) n.getNodeData().getAttributes();
-                lon = ((Number) row.getValue(longitude)).doubleValue();
+                if ( isDynamic ) {
+                    lon = ((DynamicDouble)row.getValue(longitude)).getValue(currentInt, estimator);
+                } else {
+                    lon = ((Number) row.getValue(longitude)).doubleValue();
+                }
                 lambda0 += lon;
             }
 
@@ -126,9 +158,14 @@ public class GeoLayout implements Layout {
                 }
 
                 AttributeRow row = (AttributeRow) n.getNodeData().getAttributes();
-                lat = ((Number) row.getValue(latitude)).doubleValue();
-                lon = ((Number) row.getValue(longitude)).doubleValue();
-
+                if ( isDynamic ) {
+                    lat = ((DynamicDouble)row.getValue(latitude)).getValue(currentInt, estimator);
+                    lon = ((DynamicDouble)row.getValue(longitude)).getValue(currentInt, estimator);
+                } else {
+                    lat = ((Number) row.getValue(latitude)).doubleValue();
+                    lon = ((Number) row.getValue(longitude)).doubleValue();
+                }
+                
                 lat = Math.toRadians(lat);
                 lon = Math.toRadians(lon);
 
@@ -155,8 +192,13 @@ public class GeoLayout implements Layout {
                 }
 
                 AttributeRow row = (AttributeRow) n.getNodeData().getAttributes();
-                lat = ((Number) row.getValue(latitude)).doubleValue();
-                lon = ((Number) row.getValue(longitude)).doubleValue();
+                if ( isDynamic ) {
+                    lat = ((DynamicDouble)row.getValue(latitude)).getValue(currentInt, estimator);
+                    lon = ((DynamicDouble)row.getValue(longitude)).getValue(currentInt, estimator);
+                } else {
+                    lat = ((Number) row.getValue(latitude)).doubleValue();
+                    lon = ((Number) row.getValue(longitude)).doubleValue();
+                }
 
                 lat = Math.toRadians(lat);
                 lon = Math.toRadians(lon);
@@ -184,8 +226,13 @@ public class GeoLayout implements Layout {
                 }
 
                 AttributeRow row = (AttributeRow) n.getNodeData().getAttributes();
-                lat = ((Number) row.getValue(latitude)).doubleValue();
-                lon = ((Number) row.getValue(longitude)).doubleValue();
+                if ( isDynamic ) {
+                    lat = ((DynamicDouble)row.getValue(latitude)).getValue(currentInt, estimator);
+                    lon = ((DynamicDouble)row.getValue(longitude)).getValue(currentInt, estimator);
+                } else {
+                    lat = ((Number) row.getValue(latitude)).doubleValue();
+                    lon = ((Number) row.getValue(longitude)).doubleValue();
+                }
 
                 lat = Math.toRadians(lat);
                 lon = Math.toRadians(lon);
@@ -213,8 +260,13 @@ public class GeoLayout implements Layout {
                 }
 
                 AttributeRow row = (AttributeRow) n.getNodeData().getAttributes();
-                lat = ((Number) row.getValue(latitude)).doubleValue();
-                lon = ((Number) row.getValue(longitude)).doubleValue();
+                if ( isDynamic ) {
+                    lat = ((DynamicDouble)row.getValue(latitude)).getValue(currentInt, estimator);
+                    lon = ((DynamicDouble)row.getValue(longitude)).getValue(currentInt, estimator);
+                } else {
+                    lat = ((Number) row.getValue(latitude)).doubleValue();
+                    lon = ((Number) row.getValue(longitude)).doubleValue();
+                }
 
                 lat = Math.toRadians(lat);
                 lon = Math.toRadians(lon);
@@ -254,8 +306,13 @@ public class GeoLayout implements Layout {
                 }
 
                 AttributeRow row = (AttributeRow) n.getNodeData().getAttributes();
-                lat = ((Number) row.getValue(latitude)).doubleValue();
-                lon = ((Number) row.getValue(longitude)).doubleValue();
+                if ( isDynamic ) {
+                    lat = ((DynamicDouble)row.getValue(latitude)).getValue(currentInt, estimator);
+                    lon = ((DynamicDouble)row.getValue(longitude)).getValue(currentInt, estimator);
+                } else {
+                    lat = ((Number) row.getValue(latitude)).doubleValue();
+                    lon = ((Number) row.getValue(longitude)).doubleValue();
+                }
 
                 lat = Math.toRadians(lat);
                 lon = Math.toRadians(lon);
@@ -301,8 +358,13 @@ public class GeoLayout implements Layout {
                 }
 
                 AttributeRow row = (AttributeRow) n.getNodeData().getAttributes();
-                lat = ((Number) row.getValue(latitude)).doubleValue();
-                lon = ((Number) row.getValue(longitude)).doubleValue();
+                if ( isDynamic ) {
+                    lat = ((DynamicDouble)row.getValue(latitude)).getValue(currentInt, estimator);
+                    lon = ((DynamicDouble)row.getValue(longitude)).getValue(currentInt, estimator);
+                } else {
+                    lat = ((Number) row.getValue(latitude)).doubleValue();
+                    lon = ((Number) row.getValue(longitude)).doubleValue();
+                }
 
                 lat = Math.toRadians(lat);
                 lon = Math.toRadians(lon);
@@ -331,8 +393,13 @@ public class GeoLayout implements Layout {
                 }
 
                 AttributeRow row = (AttributeRow) n.getNodeData().getAttributes();
-                lat = ((Number) row.getValue(latitude)).doubleValue();
-                lon = ((Number) row.getValue(longitude)).doubleValue();
+                if ( isDynamic ) {
+                    lat = ((DynamicDouble)row.getValue(latitude)).getValue(currentInt, estimator);
+                    lon = ((DynamicDouble)row.getValue(longitude)).getValue(currentInt, estimator);
+                } else {
+                    lat = ((Number) row.getValue(latitude)).doubleValue();
+                    lon = ((Number) row.getValue(longitude)).doubleValue();
+                }
 
                 lat = Math.toRadians(lat);
                 lon = Math.toRadians(lon);
