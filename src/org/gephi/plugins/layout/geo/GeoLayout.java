@@ -55,7 +55,7 @@ public class GeoLayout implements Layout {
     private AttributeColumn longitude;
     private boolean radian = false;
     private String projection = "Mercator";
-    public static String[] rows = {"Mercator","Transverse Mercator","Miller cylindrical","Gall–Peters","Sinusoidal","Lambert cylindrical","Equirectangular"};
+    public static String[] rows = {"Mercator","Transverse Mercator","Miller cylindrical","Gall–Peters","Sinusoidal","Lambert cylindrical","Equirectangular","Winkel tripel"};
 
     public GeoLayout(GeoLayoutBuilder builder) {
         this.builder = builder;
@@ -339,6 +339,39 @@ public class GeoLayout implements Layout {
 
                 nodeX = (float)(scale*lon);
                 nodeY = (float)(scale*lat);
+
+                averageX += nodeX;
+                averageY += nodeY;
+
+                n.getNodeData().setX(nodeX);
+                n.getNodeData().setY(nodeY);
+            }
+
+            averageX = averageX/validNodes.size();
+            averageY = averageY/validNodes.size();
+        }
+
+        // Winkel tripel
+        else if(projection.equals("Winkel tripel")){
+            double alpha = 0;
+
+            //apply the formula:
+            for(Node n: validNodes){
+                if (n.getNodeData().getLayoutData() == null || !(n.getNodeData().getLayoutData() instanceof GeoLayoutData)) {
+                    n.getNodeData().setLayoutData(new GeoLayoutData());
+                }
+
+                AttributeRow row = (AttributeRow) n.getNodeData().getAttributes();
+                lat = ((Number) row.getValue(latitude)).doubleValue();
+                lon = ((Number) row.getValue(longitude)).doubleValue();
+
+                lat = Math.toRadians(lat);
+                lon = Math.toRadians(lon);
+
+                alpha = Math.acos(Math.cos(lon/2)*2/Math.PI)
+
+                nodeX = (float)(scale*((lon*2/Math.PI)+(2*Math.cos(lat)*Math.sin(lon/2)*alpha/Math.sin(alpha))));
+                nodeY = (float)(scale*(lat+Math.sin(lat)*alpha/Math.sin(alpha)));
 
                 averageX += nodeX;
                 averageY += nodeY;
