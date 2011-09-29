@@ -368,7 +368,7 @@ public class GeoLayout implements Layout {
                 lat = Math.toRadians(lat);
                 lon = Math.toRadians(lon);
 
-                alpha = Math.acos(Math.cos(lon/2)*2/Math.PI)
+                alpha = Math.acos(Math.cos(lon/2)*2/Math.PI);
 
                 nodeX = (float)(scale*((lon*2/Math.PI)+(2*Math.cos(lat)*Math.sin(lon/2)*alpha/Math.sin(alpha))));
                 nodeY = (float)(scale*(lat+Math.sin(lat)*alpha/Math.sin(alpha)));
