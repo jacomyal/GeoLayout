@@ -94,14 +94,11 @@ public class GeoLayout implements Layout {
         float averageX = 0;
         float averageY = 0;
         Graph gr = graphModel.getGraph();
-
-        boolean isDynamic = false;
         
         // try to handle dynamics
         DynamicController dc = Lookup.getDefault().lookup(DynamicController.class);
         DynamicModel dm = dc.getModel();
-        //if (!dm.isDynamicGraph()) return; // Hack: only dynamic graphs
-        isDynamic = dm.isDynamicGraph();
+        boolean isDynamic = dm.isDynamicGraph();
         Graph graph = null;
         Estimator estimator = null;
         TimeInterval timeInt = null;
