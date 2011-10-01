@@ -420,10 +420,15 @@ public class GeoLayout implements Layout {
                 if (n.getNodeData().getLayoutData() == null || !(n.getNodeData().getLayoutData() instanceof GeoLayoutData)) {
                     n.getNodeData().setLayoutData(new GeoLayoutData());
                 }
-
+                
                 AttributeRow row = (AttributeRow) n.getNodeData().getAttributes();
-                lat = ((Number) row.getValue(latitude)).doubleValue();
-                lon = ((Number) row.getValue(longitude)).doubleValue();
+                if ( isDynamic ) {
+                    lat = ((DynamicDouble)row.getValue(latitude)).getValue(currentInt, estimator);
+                    lon = ((DynamicDouble)row.getValue(longitude)).getValue(currentInt, estimator);
+                } else {
+                    lat = ((Number) row.getValue(latitude)).doubleValue();
+                    lon = ((Number) row.getValue(longitude)).doubleValue();
+                }
 
                 lat = Math.toRadians(lat);
                 lon = Math.toRadians(lon);
