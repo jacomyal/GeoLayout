@@ -21,6 +21,7 @@ along with Gephi.  If not, see <http://www.gnu.org/licenses/>.
 package org.gephi.plugins.layout.geo;
 
 import java.beans.PropertyEditorSupport;
+import org.gephi.plugins.layout.geo.GeoLayout;
 
 /**
  *
