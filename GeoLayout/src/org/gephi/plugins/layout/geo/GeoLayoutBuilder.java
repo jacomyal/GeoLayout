@@ -25,6 +25,7 @@ import javax.swing.JPanel;
 import org.gephi.layout.spi.Layout;
 import org.gephi.layout.spi.LayoutBuilder;
 import org.gephi.layout.spi.LayoutUI;
+import org.gephi.plugins.layout.geo.GeoLayout;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
